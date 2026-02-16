@@ -1,4 +1,4 @@
-package br.com.dio.model;
+package br.com.vihsousa.model;
 
 public enum GameStatusEnum {
 
