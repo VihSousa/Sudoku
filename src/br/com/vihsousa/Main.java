@@ -16,20 +16,30 @@ import static java.util.stream.Collectors.toMap;
 
 public class Main {
 
-    private final static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     private static Board board;
 
-    private final static int BOARD_LIMIT = 9;
+    private static final int BOARD_LIMIT = 9;
 
     public static void main(String[] args) {
+
+        if (args.length == 0) {
+            System.out.println("ERRO: Configuração do tabuleiro não encontrada!");
+            System.out.println("Por favor, passe as posições como argumento ao rodar o programa.");
+            System.exit(1); // Encerra o programa de forma controlada
+        }
+
         final var positions = Stream.of(args)
                 .collect(toMap(
                         k -> k.split(";")[0],
                         v -> v.split(";")[1]
                 ));
         var option = -1;
-        while (true){
+
+        var running = true;
+
+        while (running){
             System.out.println("Selecione uma das opções a seguir");
             System.out.println("1 - Iniciar um novo Jogo");
             System.out.println("2 - Colocar um novo número");
@@ -50,7 +60,7 @@ public class Main {
                 case 5 -> showGameStatus();
                 case 6 -> clearGame();
                 case 7 -> finishGame();
-                case 8 -> System.exit(0);
+                case 8 -> running = false;
                 default -> System.out.println("Opção inválida, selecione uma das opções do menu");
             }
         }
@@ -89,10 +99,10 @@ public class Main {
         var col = runUntilGetValidNumber(0, 8);
         System.out.println("Informe a linha que em que o número será inserido");
         var row = runUntilGetValidNumber(0, 8);
-        System.out.printf("Informe o número que vai entrar na posição [%s,%s]\n", col, row);
+        System.out.printf("Informe o número que vai entrar na posição [%s,%s]%n", col, row);
         var value = runUntilGetValidNumber(1, 9);
         if (!board.changeValue(col, row, value)){
-            System.out.printf("A posição [%s,%s] tem um valor fixo\n", col, row);
+            System.out.printf("A posição [%s,%s] tem um valor fixo%n", col, row);
         }
     }
 
@@ -107,7 +117,7 @@ public class Main {
         System.out.println("Informe a linha que em que o número será inserido");
         var row = runUntilGetValidNumber(0, 8);
         if (!board.clearValue(col, row)){
-            System.out.printf("A posição [%s,%s] tem um valor fixo\n", col, row);
+            System.out.printf("A posição [%s,%s] tem um valor fixo%n", col, row);
         }
     }
 
@@ -120,7 +130,7 @@ public class Main {
         var args = new Object[81];
         var argPos = 0;
         for (int i = 0; i < BOARD_LIMIT; i++) {
-            for (var col: board.getSpaces()){
+            for (var col: board.spaces()){
                 args[argPos ++] = " " + ((isNull(col.get(i).getActual())) ? " " : col.get(i).getActual());
             }
         }
@@ -134,7 +144,7 @@ public class Main {
             return;
         }
 
-        System.out.printf("O jogo atualmente se encontra no status %s\n", board.getStatus().getLabel());
+        System.out.printf("O jogo atualmente se encontra no status %s%n", board.getStatus().getLabel());
         if(board.hasErrors()){
             System.out.println("O jogo contém erros");
         } else {
@@ -181,7 +191,7 @@ public class Main {
     private static int runUntilGetValidNumber(final int min, final int max){
         var current = scanner.nextInt();
         while (current < min || current > max){
-            System.out.printf("Informe um número entre %s e %s\n", min, max);
+            System.out.printf("Informe um número entre %s e %s%n", min, max);
             current = scanner.nextInt();
         }
         return current;
